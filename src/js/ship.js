@@ -3,7 +3,7 @@ export const Ship = function (value = null) {
   let hits = 0;
   let sunk = false;
 
-  const hit = () => hits + 1;
+  const hit = () => (hits += 1);
 
   const isSunk = () => {
     if (hits >= length) sunk = true;
@@ -11,9 +11,6 @@ export const Ship = function (value = null) {
   };
 
   return {
-    length,
-    hits,
-    sunk,
     hit,
     isSunk,
   };

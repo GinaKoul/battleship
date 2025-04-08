@@ -1,0 +1,29 @@
+:root {
+  --border-color: #1c1c84;
+  --box-filled-bg: #000042;
+  --ship-border-color: #000035;
+}
+
+.main-content {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 1200px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.grid {
+  width: fit-content;
+  display: flex;
+  border: 1px solid var(--border-color);
+}
+
+.grid-box {
+  width: 48px;
+  height: 48px;
+  border: 1px solid var(--border-color);
+}
+
+.occupied {
+  background-color: var(--box-filled-bg);
+}
