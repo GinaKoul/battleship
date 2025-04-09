@@ -12,15 +12,41 @@
   justify-content: space-between;
 }
 
-.grid {
-  width: fit-content;
+.grid-outer {
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-template-rows: auto auto;
+}
+
+.column-titles {
+  grid-area: 1/2/2/3;
   display: flex;
+  justify-content: space-around;
+  margin-bottom: 8px;
+}
+
+.row-titles {
+  grid-area: 2/1/3/2;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  margin-right: 8px;
+}
+
+.grid {
+  grid-area: 2/2/3/3;
+  display: grid;
+  grid-template-columns: repeat(10, 40px);
+  grid-template-rows: repeat(10, 40px);
   border: 1px solid var(--border-color);
 }
 
+.grid-header,
 .grid-box {
-  width: 48px;
-  height: 48px;
+  aspect-ratio: 1/1;
+}
+
+.grid-box {
   border: 1px solid var(--border-color);
 }
 
