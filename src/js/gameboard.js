@@ -1,3 +1,4 @@
+import { PubSub } from "./pubsub.js";
 import { Ship } from "./ship.js";
 
 export const Gameboard = function () {
@@ -19,7 +20,7 @@ export const Gameboard = function () {
   };
 
   const allBoatsSunk = () => {
-    return boats.size > 0;
+    return boats.size <= 0;
   };
 
   const placeShip = (shipType, coordinates) => {
@@ -27,8 +28,8 @@ export const Gameboard = function () {
     if (newShip["added"]) return;
     let validCoordinates = coordinates.every((x) => !primaryGrid.get(x));
     if (!validCoordinates) return;
-    coordinates.forEach((element) => {
-      primaryGrid.set(element, {
+    coordinates.forEach((coordinate) => {
+      primaryGrid.set(coordinate, {
         hit: false,
         shipType: shipType,
         ship: newShip["ship"],
@@ -38,15 +39,17 @@ export const Gameboard = function () {
   };
 
   const receiveAttack = (target) => {
-    if (secondaryGrid.get(target)) return;
-    let targetShip = primaryGrid.get(target);
-    if (targetShip) {
-      targetShip["hit"] = true;
-      targetShip["ship"].hit();
-      if (targetShip["ship"].isSunk()) boats(targetShip["shipType"]).delete();
-      secondaryGrid.set(target, true);
+    let gridTarget = primaryGrid.get(target);
+    if (gridTarget) {
+      if (!gridTarget["ship"]) return false;
+      gridTarget["ship"].hit();
+      if (gridTarget["ship"].isSunk()) boats.delete(gridTarget["shipType"]);
+      return gridTarget["hit"] ? false : (gridTarget["hit"] = true);
     } else {
-      secondaryGrid.set(target, false);
+      primaryGrid.set(target, {
+        hit: false,
+      });
+      return true;
     }
   };
 

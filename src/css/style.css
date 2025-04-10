@@ -1,7 +1,28 @@
 :root {
+  --body-bg: #aaaaaa;
   --border-color: #1c1c84;
-  --box-filled-bg: #000042;
+  --box-occupied-bg: #000042;
   --ship-border-color: #000035;
+  --box-hit-bg: #8b000b;
+  --box-miss-bg: #ffffff;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--body-bg);
+}
+
+header {
+  padding: 0;
+  margin: 0 0 32px 0;
+  background-color: var(--border-color);
+}
+
+h1 {
+  margin: 0;
+  padding: 24px 16px;
+  text-align: center;
 }
 
 .main-content {
@@ -51,5 +72,13 @@
 }
 
 .occupied {
-  background-color: var(--box-filled-bg);
+  background-color: var(--box-occupied-bg);
+}
+
+.hit {
+  background-color: var(--box-hit-bg);
+}
+
+.miss {
+  background-color: var(--box-miss-bg);
 }

@@ -1,17 +1,46 @@
+import { PubSub } from "./pubsub";
+
 export const RenderGameboard = function (player, opponent) {
   const name = player.getName();
-  const gameboard = player.getGameboard();
+  const playerGameboard = player.getGameboard();
   const opponentGameboard = opponent.getGameboard();
   const columns = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
 
   const addBoats = () => {
-    gameboard.getPrimaryGrid().forEach((value, key) => {
+    playerGameboard.getPrimaryGrid().forEach((value, key) => {
       document.getElementById(key).classList.add("occupied");
     });
   };
 
+  const updatePrimaryGrid = () => {
+    playerGameboard.getPrimaryGrid().forEach((value, key) => {
+      if (value["hit"]) {
+        document.getElementById(key).classList.add("hit");
+      } else if (value["ship"]) {
+        document.getElementById(key).classList.add("occupied");
+      } else {
+        document.getElementById(key).classList.add("miss");
+      }
+    });
+  };
+
+  const updateSecondaryGrid = (targetEl, targetId) => {
+    const targetBox = opponentGameboard.getPrimaryGrid().get(targetId);
+    targetBox["shipType"]
+      ? targetEl.classList.add("hit")
+      : targetEl.classList.add("miss");
+  };
+
   const handleAttack = (event) => {
-    opponentGameboard.receiveAttack(event.target.getAttribute("id"));
+    const targetEl = event.target;
+    const targetId = targetEl.getAttribute("id");
+    opponentGameboard.receiveAttack(targetId);
+    updateSecondaryGrid(targetEl, targetId);
+    if (opponentGameboard.allBoatsSunk()) {
+      PubSub.trigger("EndGame");
+    } else {
+      PubSub.trigger("SwitchTurns");
+    }
   };
 
   const renderGrid = (gridName) => {
@@ -41,7 +70,7 @@ export const RenderGameboard = function (player, opponent) {
         gridBox.setAttribute("id", `${col}${index}`);
         gridBox.classList.add("grid-box");
         if (gridName === "secondary") {
-          gridBox.addEventListener("click", handleAttack);
+          gridBox.addEventListener("click", handleAttack, { once: true });
         }
         grid.appendChild(gridBox);
       });
@@ -55,14 +84,12 @@ export const RenderGameboard = function (player, opponent) {
 
   const init = () => {
     const mainContent = document.querySelector("#content");
+
+    PubSub.on("UpdateBoard", updatePrimaryGrid);
+
+    mainContent.textContent = "";
     mainContent.appendChild(renderGrid("primary"));
     mainContent.appendChild(renderGrid("secondary"));
-
-    gameboard.placeShip("carrier", ["A1", "A2", "A3", "A4", "A5"]);
-    gameboard.placeShip("battleship", ["B1", "B2", "B3", "B4"]);
-    gameboard.placeShip("destroyer", ["C1", "C2", "C3"]);
-    gameboard.placeShip("submarine", ["D1", "D2", "D3"]);
-    gameboard.placeShip("patrolBoat", ["E1", "E2"]);
 
     addBoats();
   };
