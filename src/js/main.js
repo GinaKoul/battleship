@@ -1,7 +1,7 @@
 import { PubSub } from "./pubsub.js";
 import "../css/style.css";
 import { Player } from "./player.js";
-import { RenderGameboard } from "./render-gameboard.js";
+import { RenderGameboard as UserBoard } from "./render-gameboard.js";
 import { OpponentGame } from "./computer-game.js";
 
 const player1 = Player("gina");
@@ -25,11 +25,12 @@ gameboard2.placeShip("patrolBoat", ["E1", "E2"]);
 
 const computer = OpponentGame(player2, player1);
 
-RenderGameboard(player1, player2);
+UserBoard.render(player1, player2);
 
 const endGame = () => {
   const message = `End of game! ${currentPlayer.getName()} is the winner`;
   document.querySelector(".top-section").prepend(message);
+  document.querySelector(".boards").style.pointerEvents = "none";
 };
 
 const switchTurns = () => {

@@ -1,10 +1,10 @@
 import { PubSub } from "./pubsub";
 
-export const RenderGameboard = function (player, opponent) {
-  const name = player.getName();
-  const playerGameboard = player.getGameboard();
-  const opponentGameboard = opponent.getGameboard();
-  const columns = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
+export const RenderGameboard = (function () {
+  let name;
+  let playerGameboard;
+  let opponentGameboard;
+  let columns;
 
   const addShips = () => {
     playerGameboard.getPrimaryGrid().forEach((value, key) => {
@@ -21,31 +21,34 @@ export const RenderGameboard = function (player, opponent) {
   };
 
   const updatePrimaryGrid = () => {
+    const primaryGrid = document.querySelector("#primary");
     playerGameboard.getPrimaryGrid().forEach((value, key) => {
       if (value["hit"]) {
-        document.getElementById(key).classList.add("hit");
+        primaryGrid.querySelector(`[data-id=${key}]`).classList.add("hit");
         shipState("primary", value);
       } else if (value["ship"]) {
-        document.getElementById(key).classList.add("occupied");
+        primaryGrid.querySelector(`[data-id=${key}]`).classList.add("occupied");
       } else {
-        document.getElementById(key).classList.add("miss");
+        primaryGrid.querySelector(`[data-id=${key}]`).classList.add("miss");
       }
     });
   };
 
   const updateSecondaryGrid = (targetEl, targetId) => {
-    const targetBox = opponentGameboard.getPrimaryGrid().get(targetId);
-    if (targetBox["shipType"]) {
-      targetEl.classList.add("hit");
-      shipState("secondary", targetBox);
-    } else {
-      targetEl.classList.add("miss");
-    }
+    const secondaryGrid = document.querySelector("#secondary");
+    opponentGameboard.getPrimaryGrid().forEach((value, key) => {
+      if (!value["hit"] && !value.hasOwnProperty("shipType")) {
+        secondaryGrid.querySelector(`[data-id=${key}]`).classList.add("miss");
+      } else if (value["hit"]) {
+        secondaryGrid.querySelector(`[data-id=${key}]`).classList.add("hit");
+        shipState("secondary", value);
+      }
+    });
   };
 
   const handleAttack = (event) => {
     const targetEl = event.target;
-    const targetId = targetEl.getAttribute("id");
+    const targetId = targetEl.getAttribute("data-id");
     opponentGameboard.receiveAttack(targetId);
     updateSecondaryGrid(targetEl, targetId);
     if (opponentGameboard.allShipsSunk()) {
@@ -103,7 +106,7 @@ export const RenderGameboard = function (player, opponent) {
 
       columns.forEach((col) => {
         let gridBox = document.createElement("div");
-        gridBox.setAttribute("id", `${col}${index}`);
+        gridBox.setAttribute("data-id", `${col}${index}`);
         gridBox.classList.add("grid-box");
         if (gridName === "secondary") {
           gridBox.addEventListener("click", handleAttack, { once: true });
@@ -119,7 +122,12 @@ export const RenderGameboard = function (player, opponent) {
     return gridOuter;
   };
 
-  const init = () => {
+  const render = (player, opponent) => {
+    name = player.getName();
+    playerGameboard = player.getGameboard();
+    opponentGameboard = opponent.getGameboard();
+    columns = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
+
     const mainContent = document.querySelector("#content");
     mainContent.textContent = "";
 
@@ -137,8 +145,12 @@ export const RenderGameboard = function (player, opponent) {
     gameboards.append(renderGrid("primary"), renderGrid("secondary"));
     mainContent.append(top, gameboards);
 
-    addShips();
+    updatePrimaryGrid();
+    updateSecondaryGrid();
+    // addShips();
   };
 
-  init();
-};
+  return {
+    render,
+  };
+})();
