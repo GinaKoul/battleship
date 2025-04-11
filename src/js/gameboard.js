@@ -19,7 +19,7 @@ export const Gameboard = function () {
     return secondaryGrid;
   };
 
-  const allBoatsSunk = () => {
+  const allShipsSunk = () => {
     return boats.size <= 0;
   };
 
@@ -41,10 +41,11 @@ export const Gameboard = function () {
   const receiveAttack = (target) => {
     let gridTarget = primaryGrid.get(target);
     if (gridTarget) {
-      if (!gridTarget["ship"]) return false;
+      if (!gridTarget["ship"] || gridTarget["hit"]) return false;
+      gridTarget["hit"] = true;
       gridTarget["ship"].hit();
       if (gridTarget["ship"].isSunk()) boats.delete(gridTarget["shipType"]);
-      return gridTarget["hit"] ? false : (gridTarget["hit"] = true);
+      return true;
     } else {
       primaryGrid.set(target, {
         hit: false,
@@ -56,7 +57,7 @@ export const Gameboard = function () {
   return {
     getPrimaryGrid,
     getSecondaryGrid,
-    allBoatsSunk,
+    allShipsSunk,
     placeShip,
     receiveAttack,
   };

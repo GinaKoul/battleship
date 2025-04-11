@@ -28,7 +28,8 @@ const computer = OpponentGame(player2, player1);
 RenderGameboard(player1, player2);
 
 const endGame = () => {
-  prompt(`End of game! ${currentPlayer.getName()} is the winner`);
+  const message = `End of game! ${currentPlayer.getName()} is the winner`;
+  document.querySelector(".top-section").prepend(message);
 };
 
 const switchTurns = () => {

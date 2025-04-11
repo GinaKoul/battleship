@@ -6,16 +6,25 @@ export const RenderGameboard = function (player, opponent) {
   const opponentGameboard = opponent.getGameboard();
   const columns = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
 
-  const addBoats = () => {
+  const addShips = () => {
     playerGameboard.getPrimaryGrid().forEach((value, key) => {
       document.getElementById(key).classList.add("occupied");
     });
+  };
+
+  const shipState = (grid, target) => {
+    if (target["ship"].isSunk()) {
+      document
+        .querySelector(`#${grid} [data-id=${target["shipType"]}]`)
+        .classList.add("hit");
+    }
   };
 
   const updatePrimaryGrid = () => {
     playerGameboard.getPrimaryGrid().forEach((value, key) => {
       if (value["hit"]) {
         document.getElementById(key).classList.add("hit");
+        shipState("primary", value);
       } else if (value["ship"]) {
         document.getElementById(key).classList.add("occupied");
       } else {
@@ -26,9 +35,12 @@ export const RenderGameboard = function (player, opponent) {
 
   const updateSecondaryGrid = (targetEl, targetId) => {
     const targetBox = opponentGameboard.getPrimaryGrid().get(targetId);
-    targetBox["shipType"]
-      ? targetEl.classList.add("hit")
-      : targetEl.classList.add("miss");
+    if (targetBox["shipType"]) {
+      targetEl.classList.add("hit");
+      shipState("secondary", targetBox);
+    } else {
+      targetEl.classList.add("miss");
+    }
   };
 
   const handleAttack = (event) => {
@@ -36,16 +48,40 @@ export const RenderGameboard = function (player, opponent) {
     const targetId = targetEl.getAttribute("id");
     opponentGameboard.receiveAttack(targetId);
     updateSecondaryGrid(targetEl, targetId);
-    if (opponentGameboard.allBoatsSunk()) {
+    if (opponentGameboard.allShipsSunk()) {
       PubSub.trigger("EndGame");
     } else {
       PubSub.trigger("SwitchTurns");
     }
   };
 
+  const createShip = (shipName, size) => {
+    const ship = document.createElement("div");
+    ship.setAttribute("data-id", shipName);
+    ship.classList.add("ship");
+    for (let index = 0; index < size; index++) {
+      const shipBox = document.createElement("div");
+      shipBox.classList.add("ship-box");
+      ship.appendChild(shipBox);
+    }
+    return ship;
+  };
+
+  const createShips = () => {
+    const shipsOuter = document.createElement("div");
+    shipsOuter.classList.add("ships");
+    shipsOuter.append(
+      createShip("carrier", 5),
+      createShip("battleship", 4),
+      createShip("destroyer", 3),
+      createShip("submarine", 3),
+      createShip("patrolBoat", 2)
+    );
+    return shipsOuter;
+  };
+
   const renderGrid = (gridName) => {
     const grid = document.createElement("div");
-    grid.setAttribute("id", gridName);
     grid.classList.add("grid");
 
     const columnHeaders = document.createElement("div");
@@ -77,21 +113,31 @@ export const RenderGameboard = function (player, opponent) {
     }
 
     const gridOuter = document.createElement("div");
+    gridOuter.setAttribute("id", gridName);
     gridOuter.classList.add("grid-outer");
-    gridOuter.append(columnHeaders, rowHeaders, grid);
+    gridOuter.append(columnHeaders, rowHeaders, grid, createShips(gridName));
     return gridOuter;
   };
 
   const init = () => {
     const mainContent = document.querySelector("#content");
+    mainContent.textContent = "";
+
+    const top = document.createElement("div");
+    top.classList.add("top-section");
+    const restartButton = document.createElement("button");
+    restartButton.textContent = "New game";
+    top.appendChild(restartButton);
+
+    const gameboards = document.createElement("div");
+    gameboards.classList.add("boards");
 
     PubSub.on("UpdateBoard", updatePrimaryGrid);
 
-    mainContent.textContent = "";
-    mainContent.appendChild(renderGrid("primary"));
-    mainContent.appendChild(renderGrid("secondary"));
+    gameboards.append(renderGrid("primary"), renderGrid("secondary"));
+    mainContent.append(top, gameboards);
 
-    addBoats();
+    addShips();
   };
 
   init();
