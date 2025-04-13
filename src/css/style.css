@@ -11,6 +11,7 @@ body {
   margin: 0;
   padding: 0;
   background-color: var(--body-bg);
+  font-size: 16px;
 }
 
 header {
@@ -32,6 +33,10 @@ h1 {
   text-align: center;
 }
 
+h2 {
+  margin-bottom: 24px;
+}
+
 .main-content {
   margin-left: auto;
   margin-right: auto;
@@ -49,8 +54,85 @@ button {
   padding: 16px 8px;
   background-color: var(--border-color);
   color: #ffffff;
+  font-size: 1.125rem;
+  font-weight: 500;
   margin: 8px;
+  min-width: 100px;
+  cursor: pointer;
 }
+
+/* Game start*/
+
+.main-content:has(form) {
+  width: fit-content;
+}
+
+form {
+  text-align: center;
+}
+
+/* Form Fields */
+.form-field,
+.radio-field {
+  margin-bottom: 16px;
+}
+.radio-field {
+  position: relative;
+}
+.radio-field label {
+  padding-left: 25px;
+  pointer-events: none;
+}
+.radio-field input {
+  position: absolute;
+  left: -5px;
+  top: -3px;
+  width: 17px;
+  height: 17px;
+  opacity: 0;
+  cursor: pointer;
+}
+.radio-field:before {
+  position: absolute;
+  content: "";
+  left: 2px;
+  top: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1px solid var(--border-color);
+  pointer-events: none;
+}
+
+.radio-field:has(input:checked):before {
+  background-color: var(--box-occupied-bg);
+}
+.radio-field:has(input:checked):after {
+  position: absolute;
+  content: "";
+  background-color: var(--box-occupied-bg);
+  left: 5px;
+  top: 5px;
+  width: 10px;
+  height: 10px;
+  border-radius: 8px;
+  pointer-events: none;
+}
+input {
+  appearance: none;
+  padding: 8px;
+  border: 1px solid var(--border-color);
+  outline: none;
+}
+input:focus,
+.checkbox-field:has(input:focus):before {
+  border: 1px solid var(--border-color);
+  -webkit-box-shadow: 0 0 2px 2px var(--border-color);
+  -moz-box-shadow: 0 0 2px 2px var(--border-color);
+  box-shadow: 0 0 2px 2px var(--border-color);
+}
+
+/*Game main*/
 
 .boards {
   display: flex;

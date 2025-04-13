@@ -1,11 +1,11 @@
 import { PubSub } from "./pubsub";
 
-export const OpponentGame = function (player, opponent) {
-  const playerGameboard = player.getGameboard();
-  const opponentGameboard = opponent.getGameboard();
+export const OpponentGame = function (opponent) {
+  let opponentGameboard = opponent.getGameboard();
   const chars = "ABCDEFGHIJ";
 
-  const attack = () => {
+  const attack = (opponent) => {
+    // opponentGameboard = opponent.getGameboard();
     const randomTarget =
       chars.charAt(Math.floor(Math.random() * 9)) +
       Math.floor(Math.random() * (10 - 1) + 1);

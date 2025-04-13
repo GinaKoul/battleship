@@ -140,7 +140,7 @@ export const RenderGameboard = (function () {
     const gameboards = document.createElement("div");
     gameboards.classList.add("boards");
 
-    PubSub.on("UpdateBoard", updatePrimaryGrid);
+    // PubSub.on("UpdateBoard", updatePrimaryGrid);
 
     gameboards.append(renderGrid("primary"), renderGrid("secondary"));
     mainContent.append(top, gameboards);
