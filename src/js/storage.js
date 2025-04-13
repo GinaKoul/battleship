@@ -4,35 +4,35 @@ export const Storage = (function () {
   const localAvailability = storageAvailable("localStorage");
   const sessionAvailability = storageAvailable("sessionStorage");
 
-  function setPlayersNumber(value) {
+  const setPlayersNumber = (value) => {
     if (sessionAvailability) {
       sessionStorage.setItem("PlayersNumber", JSON.stringify(value));
     }
-  }
+  };
 
-  function getPlayersNumber() {
+  const getPlayersNumber = () => {
     return sessionStorage.getItem("PlayersNumber");
-  }
+  };
 
-  function setFirstPlayerName(value) {
+  const setFirstPlayerName = (value) => {
     if (sessionAvailability) {
       sessionStorage.setItem("FirstPlayerName", JSON.stringify(value));
     }
-  }
+  };
 
-  function getFirstPlayerName() {
+  const getFirstPlayerName = () => {
     return sessionStorage.getItem("FirstPlayerName");
-  }
+  };
 
-  function setSecondPlayerName(value) {
+  const setSecondPlayerName = (value) => {
     if (sessionAvailability) {
       sessionStorage.setItem("SecondPlayerName", JSON.stringify(value));
     }
-  }
+  };
 
-  function getSecondPlayerName() {
+  const getSecondPlayerName = () => {
     return sessionStorage.getItem("SecondPlayerName");
-  }
+  };
   return {
     setPlayersNumber,
     getPlayersNumber,
