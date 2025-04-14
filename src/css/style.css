@@ -12,29 +12,38 @@ body {
   padding: 0;
   background-color: var(--body-bg);
   font-size: 16px;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  height: 100vh;
 }
 
 header {
   padding: 0;
   margin: 0 0 32px 0;
   background-color: var(--border-color);
+  grid-area: 1/1/2/2;
+}
+
+main {
+  align-self: center;
 }
 
 footer {
-  padding: 16px;
+  padding: 1rem;
   text-align: center;
   margin: 24px 0 0 0;
   background-color: var(--border-color);
+  grid-area: 3/1/4/2;
 }
 
 h1 {
   margin: 0;
-  padding: 24px 16px;
+  padding: 1.5rem 1rem;
   text-align: center;
 }
 
 h2 {
-  margin-bottom: 24px;
+  margin-bottom: 1.5rem;
 }
 
 .main-content {
@@ -44,14 +53,14 @@ h2 {
 }
 
 .top-section {
-  margin-bottom: 16px;
+  margin-bottom: 1rem;
   text-align: center;
 }
 
 button {
   outline: none;
   border: none;
-  padding: 16px 8px;
+  padding: 1rem 0.5rem;
   background-color: var(--border-color);
   color: #ffffff;
   font-size: 1.125rem;
@@ -74,8 +83,20 @@ form {
 /* Form Fields */
 .form-field,
 .radio-field {
-  margin-bottom: 16px;
+  margin-bottom: 1rem;
 }
+
+.form-field {
+  width: 100%;
+}
+
+.form-field input {
+  display: block;
+  margin-top: 1rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .radio-field {
   position: relative;
 }
@@ -141,8 +162,8 @@ input:focus,
 
 .grid-outer {
   display: grid;
-  grid-template-columns: auto auto auto;
-  grid-template-rows: auto auto;
+  grid-template-columns: repeat(3, auto);
+  grid-template-rows: repeat(2, auto);
 }
 
 .column-titles {
@@ -181,7 +202,6 @@ input:focus,
   justify-self: start;
   display: flex;
   margin: 0 0 8px 8px;
-  border: 1px solid var(--ship-border-color);
 }
 
 .ship-box {
@@ -190,8 +210,20 @@ input:focus,
   border: 1px solid var(--ship-border-color);
 }
 
+.ship-placement .ship-box {
+  width: calc(40px - 2px);
+  height: calc(40px - 2px);
+}
+
 .grid-box {
   border: 1px solid var(--border-color);
+  position: relative;
+}
+
+.grid-box .ship {
+  margin: 0;
+  pointer-events: all;
+  z-index: 10;
 }
 
 .occupied,

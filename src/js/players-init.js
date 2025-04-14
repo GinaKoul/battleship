@@ -17,6 +17,7 @@ export const InitializePlayers = (function (doc) {
         }
       } else {
         Storage.setSecondPlayerName(playerName);
+        playerNum = 0;
         PubSub.trigger("PlayerInitFinished");
       }
     }
@@ -42,7 +43,7 @@ export const InitializePlayers = (function (doc) {
     playerField.setAttribute("id", "player");
     playerLabel.setAttribute("for", "player");
     playerLabel.textContent = "Player Name";
-    formField.append(playerField, playerLabel);
+    formField.append(playerLabel, playerField);
 
     const buttonNext = doc.createElement("button");
     buttonNext.setAttribute("type", "button");

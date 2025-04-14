@@ -1,16 +1,10 @@
 import { PubSub } from "./pubsub";
 
-export const RenderGameboard = (function () {
+export const Game = (function () {
   let name;
   let playerGameboard;
   let opponentGameboard;
-  let columns;
-
-  const addShips = () => {
-    playerGameboard.getPrimaryGrid().forEach((value, key) => {
-      document.getElementById(key).classList.add("occupied");
-    });
-  };
+  const columns = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
 
   const shipState = (grid, target) => {
     if (target["ship"].isSunk()) {
@@ -34,7 +28,7 @@ export const RenderGameboard = (function () {
     });
   };
 
-  const updateSecondaryGrid = (targetEl, targetId) => {
+  const updateSecondaryGrid = () => {
     const secondaryGrid = document.querySelector("#secondary");
     opponentGameboard.getPrimaryGrid().forEach((value, key) => {
       if (!value["hit"] && !value.hasOwnProperty("shipType")) {
@@ -62,6 +56,7 @@ export const RenderGameboard = (function () {
     const ship = document.createElement("div");
     ship.setAttribute("data-id", shipName);
     ship.classList.add("ship");
+    ship.setAttribute("draggable", true);
     for (let index = 0; index < size; index++) {
       const shipBox = document.createElement("div");
       shipBox.classList.add("ship-box");
@@ -122,35 +117,119 @@ export const RenderGameboard = (function () {
     return gridOuter;
   };
 
-  const render = (player, opponent) => {
-    name = player.getName();
-    playerGameboard = player.getGameboard();
-    opponentGameboard = opponent.getGameboard();
-    columns = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
-
+  const renderBoards = () => {
     const mainContent = document.querySelector("#content");
     mainContent.textContent = "";
 
     const top = document.createElement("div");
     top.classList.add("top-section");
+    const playerTurn = document.createElement("h2");
     const restartButton = document.createElement("button");
+    playerTurn.textContent = `${name} it is your turn!`;
     restartButton.textContent = "New game";
-    top.appendChild(restartButton);
+    restartButton.addEventListener("click", () => {
+      PubSub.trigger("RestartGame");
+    });
+    top.append(playerTurn, restartButton);
 
     const gameboards = document.createElement("div");
     gameboards.classList.add("boards");
-
-    // PubSub.on("UpdateBoard", updatePrimaryGrid);
 
     gameboards.append(renderGrid("primary"), renderGrid("secondary"));
     mainContent.append(top, gameboards);
 
     updatePrimaryGrid();
     updateSecondaryGrid();
-    // addShips();
+  };
+
+  const passDevice = () => {
+    const mainContent = document.querySelector("#content");
+    mainContent.textContent = "";
+
+    const top = document.createElement("div");
+    top.classList.add("top-section");
+    const playerTurn = document.createElement("h2");
+    const restartButton = document.createElement("button");
+    playerTurn.textContent = `It is ${name}'s turn!`;
+    restartButton.textContent = "Play";
+    restartButton.addEventListener("click", renderBoards);
+    top.append(playerTurn, restartButton);
+
+    mainContent.appendChild(top);
+  };
+
+  const dropShip = (event) => {
+    const ship = event.target;
+    let clone = ship.cloneNode(true);
+    clone.style.position = "absolute";
+    let position = document.elementsFromPoint(event.clientX, event.clientY);
+    let startPosition = position[0].getAttribute("data-id");
+    console.log(startPosition);
+
+    if (startPosition) {
+      const direction = ship.getAttribute("data-direction");
+      const shipLength = ship.childElementCount;
+
+      if (direction === "horizontal") {
+        const column = startPosition.charAt(0);
+        let startingPoint = columns.findIndex((col) => col === column);
+        for (
+          let index = 0, currentPoint = startingPoint;
+          index < shipLength;
+          index++, currentPoint++
+        ) {
+          let currentCol = columns[currentPoint];
+          if (!currentCol) {
+            startingPoint -= 1;
+          }
+        }
+        startPosition = columns[startingPoint] + startPosition.substring(1);
+      }
+      clone.addEventListener("dragend", dropShip);
+      document.querySelector(`[data-id="${startPosition}"]`).appendChild(clone);
+      ship.remove();
+    }
+  };
+
+  const placeShips = (player) => {
+    name = player.getName();
+    playerGameboard = player.getGameboard();
+
+    const mainContent = document.querySelector("#content");
+    mainContent.textContent = "";
+
+    const top = document.createElement("div");
+    top.classList.add("top-section");
+    const playerTurn = document.createElement("h2");
+    const nextButton = document.createElement("button");
+    playerTurn.textContent = `${name} time to place your ships!`;
+    nextButton.textContent = "New game";
+
+    top.append(playerTurn, nextButton);
+
+    const gameboards = document.createElement("div");
+    gameboards.classList.add("boards", "ship-placement");
+
+    gameboards.append(renderGrid("primary"));
+    mainContent.append(top, gameboards);
+
+    const ships = document.querySelectorAll(".ship");
+    ships.forEach((ship) => {
+      ship.setAttribute("data-direction", "horizontal");
+      ship.addEventListener("dragend", dropShip);
+    });
+  };
+
+  const render = (player, opponent, playersNum) => {
+    name = player.getName();
+    playerGameboard = player.getGameboard();
+    opponentGameboard = opponent.getGameboard();
+
+    playersNum === "2" ? passDevice() : renderBoards();
   };
 
   return {
     render,
+    placeShips,
   };
 })();
