@@ -5,6 +5,7 @@ import { startGame } from "./start.js";
 import { InitializePlayers } from "./players-init.js";
 import { Player } from "./player.js";
 import { Game as UserBoard } from "./render-gameboard.js";
+import { shipPlacement } from "./ship-placement.js";
 import { OpponentGame } from "./computer-game.js";
 
 let playersNum = JSON.parse(Storage.getPlayersNumber());
@@ -51,7 +52,8 @@ const play = () => {
 };
 
 const userPlaceShips = () => {
-  UserBoard.placeShips(currentPlayer);
+  UserBoard.renderPlacementGrid(currentPlayer);
+  shipPlacement.render(currentPlayer);
   // const gameboard1 = player1.getGameboard();
   // gameboard1.placeShip("carrier", ["A1", "A2", "A3", "A4", "A5"]);
   // gameboard1.placeShip("battleship", ["B1", "B2", "B3", "B4"]);

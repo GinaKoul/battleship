@@ -158,42 +158,8 @@ export const Game = (function () {
     mainContent.appendChild(top);
   };
 
-  const dropShip = (event) => {
-    const ship = event.target;
-    let clone = ship.cloneNode(true);
-    clone.style.position = "absolute";
-    let position = document.elementsFromPoint(event.clientX, event.clientY);
-    let startPosition = position[0].getAttribute("data-id");
-    console.log(startPosition);
-
-    if (startPosition) {
-      const direction = ship.getAttribute("data-direction");
-      const shipLength = ship.childElementCount;
-
-      if (direction === "horizontal") {
-        const column = startPosition.charAt(0);
-        let startingPoint = columns.findIndex((col) => col === column);
-        for (
-          let index = 0, currentPoint = startingPoint;
-          index < shipLength;
-          index++, currentPoint++
-        ) {
-          let currentCol = columns[currentPoint];
-          if (!currentCol) {
-            startingPoint -= 1;
-          }
-        }
-        startPosition = columns[startingPoint] + startPosition.substring(1);
-      }
-      clone.addEventListener("dragend", dropShip);
-      document.querySelector(`[data-id="${startPosition}"]`).appendChild(clone);
-      ship.remove();
-    }
-  };
-
-  const placeShips = (player) => {
+  const renderPlacementGrid = (player) => {
     name = player.getName();
-    playerGameboard = player.getGameboard();
 
     const mainContent = document.querySelector("#content");
     mainContent.textContent = "";
@@ -203,7 +169,10 @@ export const Game = (function () {
     const playerTurn = document.createElement("h2");
     const nextButton = document.createElement("button");
     playerTurn.textContent = `${name} time to place your ships!`;
-    nextButton.textContent = "New game";
+    nextButton.textContent = "Next";
+    nextButton.addEventListener("click", () => {
+      PubSub.trigger("NextPlacement");
+    });
 
     top.append(playerTurn, nextButton);
 
@@ -212,12 +181,6 @@ export const Game = (function () {
 
     gameboards.append(renderGrid("primary"));
     mainContent.append(top, gameboards);
-
-    const ships = document.querySelectorAll(".ship");
-    ships.forEach((ship) => {
-      ship.setAttribute("data-direction", "horizontal");
-      ship.addEventListener("dragend", dropShip);
-    });
   };
 
   const render = (player, opponent, playersNum) => {
@@ -230,6 +193,6 @@ export const Game = (function () {
 
   return {
     render,
-    placeShips,
+    renderPlacementGrid,
   };
 })();
