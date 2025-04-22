@@ -1,10 +1,13 @@
 import { PubSub } from "./pubsub";
+import { Game as UserBoard } from "./render-gameboard.js";
 
 export const shipPlacement = (function () {
   let name;
   let playerGameboard;
   const columns = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
   let occupiedPositions = new Map();
+  let playersTotal;
+  let playerNum = 0;
 
   const placeShips = () => {
     let carrierPositions = [];
@@ -43,13 +46,20 @@ export const shipPlacement = (function () {
     playerGameboard.placeShip("destroyer", destroyerPositions);
     playerGameboard.placeShip("submarine", submarinePositions);
     playerGameboard.placeShip("patrolBoat", patrolBoatPositions);
+
+    if (playerNum < 2 && playersTotal === "2") {
+      PubSub.trigger("ShipPlacement");
+    } else {
+      playerNum = 0;
+      PubSub.trigger("Play");
+    }
   };
 
   const moveShip = (ship, startPosition) => {
     let clone = ship.cloneNode(true);
     clone.style.position = "absolute";
 
-    if (clone.firstChild.childElementCount <= 0) {
+    if (clone.firstChild?.childElementCount <= 0) {
       const rotateButton = document.createElement("span");
       rotateButton.classList.add("rotate");
       rotateButton.addEventListener("click", rotateShip);
@@ -175,14 +185,37 @@ export const shipPlacement = (function () {
         startPosition = getStartVertical(ship, startPosition);
       }
 
-      if (startPosition) moveShip(ship, startPosition);
+      if (startPosition) {
+        if (document.querySelector(".ships").childElementCount <= 1) {
+          document
+            .querySelector(".top-section button")
+            .classList.remove("disabled");
+        }
+        moveShip(ship, startPosition);
+      }
     }
   };
 
-  const render = (player) => {
-    name = player.getName();
-    playerGameboard = player.getGameboard();
-    occupiedPositions = new Map();
+  const renderBoard = () => {
+    const mainContent = document.querySelector("#content");
+    mainContent.textContent = "";
+
+    const top = document.createElement("div");
+    top.classList.add("top-section");
+    const playerTurn = document.createElement("h2");
+    const nextButton = document.createElement("button");
+    nextButton.classList.add("disabled");
+    playerTurn.textContent = `${name} time to place your ships!`;
+    nextButton.textContent = "Next";
+    nextButton.addEventListener("click", placeShips);
+
+    top.append(playerTurn, nextButton);
+
+    const gameboards = document.createElement("div");
+    gameboards.classList.add("boards", "ship-placement");
+
+    gameboards.append(UserBoard.renderGrid("primary"));
+    mainContent.append(top, gameboards);
 
     const ships = document.querySelectorAll(".ship");
     ships.forEach((ship) => {
@@ -191,7 +224,31 @@ export const shipPlacement = (function () {
     });
   };
 
-  PubSub.on("NextPlacement", placeShips);
+  const passDevice = () => {
+    const mainContent = document.querySelector("#content");
+    mainContent.textContent = "";
+
+    const top = document.createElement("div");
+    top.classList.add("top-section");
+    const playerTurn = document.createElement("h2");
+    const nextButton = document.createElement("button");
+    playerTurn.textContent = `It is ${name}'s turn!`;
+    nextButton.textContent = "Place Ships";
+    nextButton.addEventListener("click", renderBoard);
+    top.append(playerTurn, nextButton);
+
+    mainContent.appendChild(top);
+  };
+
+  const render = (player, playersNum) => {
+    playersTotal = playersNum;
+    playerNum++;
+    name = player.getName();
+    playerGameboard = player.getGameboard();
+    occupiedPositions = new Map();
+
+    playersNum === "2" ? passDevice() : renderBoard();
+  };
 
   return {
     render,

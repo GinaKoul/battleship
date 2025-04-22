@@ -33,6 +33,11 @@ export const Storage = (function () {
   const getSecondPlayerName = () => {
     return sessionStorage.getItem("SecondPlayerName");
   };
+
+  const clear = () => {
+    sessionStorage.clear();
+  };
+
   return {
     setPlayersNumber,
     getPlayersNumber,
@@ -40,5 +45,6 @@ export const Storage = (function () {
     getFirstPlayerName,
     setSecondPlayerName,
     getSecondPlayerName,
+    clear,
   };
 })();

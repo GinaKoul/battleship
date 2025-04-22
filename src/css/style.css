@@ -70,6 +70,12 @@ button {
   cursor: pointer;
 }
 
+.disabled {
+  background-color: grey;
+  cursor: default;
+  pointer-events: none;
+}
+
 /* Game start*/
 
 .main-content:has(form) {

@@ -36,6 +36,7 @@ export const Gameboard = function () {
       });
     });
     newShip["added"] = true;
+    return true;
   };
 
   const receiveAttack = (target) => {

@@ -49,6 +49,7 @@ export const Game = (function () {
       PubSub.trigger("EndGame");
     } else {
       PubSub.trigger("SwitchTurns");
+      PubSub.trigger("Play");
     }
   };
 
@@ -158,31 +159,6 @@ export const Game = (function () {
     mainContent.appendChild(top);
   };
 
-  const renderPlacementGrid = (player) => {
-    name = player.getName();
-
-    const mainContent = document.querySelector("#content");
-    mainContent.textContent = "";
-
-    const top = document.createElement("div");
-    top.classList.add("top-section");
-    const playerTurn = document.createElement("h2");
-    const nextButton = document.createElement("button");
-    playerTurn.textContent = `${name} time to place your ships!`;
-    nextButton.textContent = "Next";
-    nextButton.addEventListener("click", () => {
-      PubSub.trigger("NextPlacement");
-    });
-
-    top.append(playerTurn, nextButton);
-
-    const gameboards = document.createElement("div");
-    gameboards.classList.add("boards", "ship-placement");
-
-    gameboards.append(renderGrid("primary"));
-    mainContent.append(top, gameboards);
-  };
-
   const render = (player, opponent, playersNum) => {
     name = player.getName();
     playerGameboard = player.getGameboard();
@@ -193,6 +169,6 @@ export const Game = (function () {
 
   return {
     render,
-    renderPlacementGrid,
+    renderGrid,
   };
 })();

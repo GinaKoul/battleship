@@ -13,6 +13,7 @@ export const InitializePlayers = (function (doc) {
         if (playersTotal === "2") {
           PubSub.trigger("InitPlayers");
         } else {
+          playerNum = 0;
           PubSub.trigger("PlayerInitFinished");
         }
       } else {
