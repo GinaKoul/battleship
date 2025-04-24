@@ -1,5 +1,5 @@
-import { PubSub } from "./pubsub";
-import { Storage } from "./storage";
+import { PubSub } from "../pubsub";
+import { Storage } from "../storage";
 
 export const startGame = (function (doc) {
   const updatePlayers = () => {

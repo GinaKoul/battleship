@@ -1,5 +1,5 @@
-import { Storage } from "./storage";
-import { PubSub } from "./pubsub.js";
+import { Storage } from "../storage";
+import { PubSub } from "../pubsub.js";
 
 export const InitializePlayers = (function (doc) {
   let playersTotal;

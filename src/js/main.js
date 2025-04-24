@@ -1,11 +1,11 @@
 import "../css/style.css";
 import { PubSub } from "./pubsub.js";
 import { Storage } from "./storage.js";
-import { startGame } from "./start.js";
-import { InitializePlayers } from "./players-init.js";
+import { startGame } from "./pages/start.js";
+import { InitializePlayers } from "./pages/players-init.js";
 import { Player } from "./player.js";
-import { Game as UserBoard } from "./render-gameboard.js";
-import { shipPlacement } from "./ship-placement.js";
+import { Game as UserBoard } from "./pages/render-gameboard.js";
+import { shipPlacement } from "./pages/ship-placement.js";
 import { OpponentGame } from "./computer-game.js";
 
 let playersNum;
@@ -38,12 +38,8 @@ const play = () => {
 };
 
 const placeShips = () => {
-  console.log(currentPlayer === player2);
-  console.log(playersNum === "1");
-
   if (currentPlayer === player2 && playersNum === "1") {
     automatedGame.placeShips();
-    console.log("hi");
   } else {
     shipPlacement.render(currentPlayer, playersNum);
   }

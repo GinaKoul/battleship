@@ -47,15 +47,6 @@ export const OpponentGame = function (player, opponent) {
       while (!playerGameboard.placeShip(key, points)) {
         points = getRandomPoints(value);
       }
-
-      // if (playerGameboard.placeShip(key, points)) {
-      //   ships.delete(key);
-      //   if (ships.size <= 0) PubSub.trigger("Play");
-      //   console.log(points);
-      // } else {
-      //   console.log(ships);
-      //   placeShips();
-      // }
     });
     PubSub.trigger("Play");
   };

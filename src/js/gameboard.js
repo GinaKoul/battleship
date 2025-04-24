@@ -1,4 +1,3 @@
-import { PubSub } from "./pubsub.js";
 import { Ship } from "./ship.js";
 
 export const Gameboard = function () {

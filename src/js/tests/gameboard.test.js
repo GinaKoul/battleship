@@ -1,4 +1,4 @@
-import { Gameboard } from "./gameboard.js";
+import { Gameboard } from "../gameboard.js";
 
 test("Check if Gameboard factory exists", () => {
   expect(Gameboard).toBeDefined();

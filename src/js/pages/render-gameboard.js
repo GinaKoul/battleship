@@ -1,4 +1,4 @@
-import { PubSub } from "./pubsub";
+import { PubSub } from "../pubsub";
 
 export const Game = (function () {
   let name;

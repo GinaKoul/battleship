@@ -1,4 +1,4 @@
-import { Player } from "./player.js";
+import { Player } from "../player.js";
 
 test("Check if Player factory exists", () => {
   expect(Player).toBeDefined();

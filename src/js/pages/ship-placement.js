@@ -1,4 +1,4 @@
-import { PubSub } from "./pubsub";
+import { PubSub } from "../pubsub";
 import { Game as UserBoard } from "./render-gameboard.js";
 
 export const shipPlacement = (function () {
