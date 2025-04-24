@@ -38,12 +38,16 @@ const play = () => {
 };
 
 const placeShips = () => {
-  shipPlacement.render(currentPlayer, playersNum);
-  if (playersNum === "2") {
-    switchTurns();
-  } else {
+  console.log(currentPlayer === player2);
+  console.log(playersNum === "1");
+
+  if (currentPlayer === player2 && playersNum === "1") {
     automatedGame.placeShips();
+    console.log("hi");
+  } else {
+    shipPlacement.render(currentPlayer, playersNum);
   }
+  switchTurns();
 };
 
 const playerInitFinished = () => {

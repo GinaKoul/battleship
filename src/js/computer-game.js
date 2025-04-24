@@ -11,41 +11,53 @@ export const OpponentGame = function (player, opponent) {
   ships.set("submarine", 3);
   ships.set("patrolBoat", 2);
 
+  const getRandomPoints = (value) => {
+    const dir = Math.round(Math.random());
+    let startPoint;
+    let max;
+    let stablePoint;
+    if (dir === 0) {
+      startPoint = Math.floor(Math.random() * 9);
+      stablePoint = Math.floor(Math.random() * (10 - 1) + 1);
+      max = 9;
+    } else {
+      startPoint = Math.floor(Math.random() * (10 - 1) + 1);
+      stablePoint = Math.floor(Math.random() * 9);
+      max = 10;
+    }
+    let points = [];
+    for (
+      let index = 0, currentPoint = startPoint;
+      index < value;
+      index++, currentPoint++
+    ) {
+      let cur = currentPoint <= max ? currentPoint : startPoint--;
+      if (dir === 0) {
+        points.push(chars.charAt(cur) + stablePoint);
+      } else {
+        points.push(chars.charAt(stablePoint) + cur);
+      }
+    }
+    return points;
+  };
+
   const placeShips = () => {
     ships.forEach((value, key) => {
-      const dir = Math.round(Math.random());
-      let startPoint;
-      let max;
-      let stablePoint;
-      if (dir === 0) {
-        startPoint = Math.floor(Math.random() * 9);
-        stablePoint = Math.floor(Math.random() * (10 - 1) + 1);
-        max = 9;
-      } else {
-        startPoint = Math.floor(Math.random() * (10 - 1) + 1);
-        stablePoint = Math.floor(Math.random() * 9);
-        max = 10;
+      let points = getRandomPoints(value);
+      while (!playerGameboard.placeShip(key, points)) {
+        points = getRandomPoints(value);
       }
-      let points = [];
-      for (
-        let index = 0, currentPoint = startPoint;
-        index < value;
-        index++, currentPoint++
-      ) {
-        let cur = currentPoint <= max ? currentPoint : startPoint--;
-        if (dir === 0) {
-          points.push(chars.charAt(cur) + stablePoint);
-        } else {
-          points.push(chars.charAt(stablePoint) + cur);
-        }
-      }
-      if (playerGameboard.placeShip(key, points)) {
-        if (ships.size <= 0) PubSub.trigger("Play");
-      } else {
-        console.log(ships);
-        placeShips();
-      }
+
+      // if (playerGameboard.placeShip(key, points)) {
+      //   ships.delete(key);
+      //   if (ships.size <= 0) PubSub.trigger("Play");
+      //   console.log(points);
+      // } else {
+      //   console.log(ships);
+      //   placeShips();
+      // }
     });
+    PubSub.trigger("Play");
   };
 
   const attack = () => {

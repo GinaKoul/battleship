@@ -47,11 +47,11 @@ export const shipPlacement = (function () {
     playerGameboard.placeShip("submarine", submarinePositions);
     playerGameboard.placeShip("patrolBoat", patrolBoatPositions);
 
-    if (playerNum < 2 && playersTotal === "2") {
-      PubSub.trigger("ShipPlacement");
-    } else {
+    if (playerNum === 2 && playersTotal === "2") {
       playerNum = 0;
       PubSub.trigger("Play");
+    } else {
+      PubSub.trigger("ShipPlacement");
     }
   };
 
